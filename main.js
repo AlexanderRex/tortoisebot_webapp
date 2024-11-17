@@ -5,7 +5,7 @@ var app = new Vue({
         ros: null,
         logs: [],
         loading: false,
-        rosbridge_address: 'wss://i-0f2158b952d843088.robotigniteacademy.com/0d7d80eb-a4d1-4d48-9851-6dcba1e7dfe0/rosbridge/',
+        rosbridge_address: 'wss://i-059a60c586ce20b99.robotigniteacademy.com/9c2b5b52-4125-463e-b3f5-c6170ee43d8c/rosbridge/',
         port: '9090',
         mapViewer: null,
         mapGridClient: null,
@@ -26,6 +26,10 @@ var app = new Vue({
             horizontal: 0,
         },
         pubInterval: null,
+        // 3D stuff
+        viewer: null,
+        tfClient: null,
+        urdfClient: null,
     },
     methods: {
         connect: function() {
@@ -37,6 +41,7 @@ var app = new Vue({
                 this.logs.unshift((new Date()).toTimeString() + ' - Connected!');
                 this.connected = true;
                 this.loading = false;
+                this.setup3DViewer()
 
                 // Initialize map viewer
                 this.mapViewer = new ROS2D.Viewer({
@@ -76,6 +81,7 @@ var app = new Vue({
                 this.loading = false;
                 document.getElementById('map').innerHTML = '';
                 clearInterval(this.pubInterval);
+                this.unset3DViewer()
             });
         },
         disconnect: function() {
@@ -142,6 +148,47 @@ var app = new Vue({
         resetJoystickVals: function() {
             this.joystick.vertical = 0;
             this.joystick.horizontal = 0;
+        },
+        setup3DViewer() {
+            this.viewer = new ROS3D.Viewer({
+                background: '#cccccc',
+                divID: 'div3DViewer',
+                width: 400,
+                height: 300,
+                antialias: true,
+                fixedFrame: 'odom'
+            })
+
+            // Add a grid.
+            this.viewer.addObject(new ROS3D.Grid({
+                color:'#0181c4',
+                cellSize: 0.5,
+                num_cells: 20
+            }))
+
+            // Setup a client to listen to TFs.
+            this.tfClient = new ROSLIB.TFClient({
+                ros: this.ros,
+                angularThres: 0.01,
+                transThres: 0.01,
+                rate: 10.0
+            })
+
+            // Setup the URDF client.
+            this.urdfClient = new ROS3D.UrdfClient({
+                ros: this.ros,
+                param: 'robot_description',
+                tfClient: this.tfClient,
+                // We use "path: location.origin + location.pathname"
+                // instead of "path: window.location.href" to remove query params,
+                // otherwise the assets fail to load
+                path: location.origin + location.pathname,
+                rootObject: this.viewer.scene,
+                loader: ROS3D.COLLADA_LOADER_2
+            })
+        },
+        unset3DViewer() {
+            document.getElementById('div3DViewer').innerHTML = ''
         },
     },
     mounted() {
