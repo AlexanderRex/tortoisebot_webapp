@@ -12,6 +12,30 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ros2d/build/ros2d.min.js"></script>
     <!-- Vue.js -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <style>
+        #dragstartzone {
+            position: relative;
+            display: inline-block;
+            width: 200px;
+            height: 200px;
+            border: 1px solid #333;
+            border-radius: 50%;
+            margin-top: 10px;
+        }
+
+        #dragCircle {
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        #dragCircle:hover {
+            background-color: lightcoral;
+        }
+    </style>
 </head>
 
 <body>
@@ -83,6 +107,21 @@
                             </div>
                             <div class="card-body">
                                 <!-- Placeholder for commands -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Joystick</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div id="dragstartzone" @mousedown="startDrag" @mousemove="doDrag">
+                                    <div id="dragCircle" :style="dragCircleStyle"></div>
+                                </div>
+                                <hr>
                             </div>
                         </div>
                     </div>
