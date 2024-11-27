@@ -110,43 +110,63 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-8">
-                        <div class="card mt-2">
-                            <div class="card-header">
-                                <h4>Commands</h4>
-                            </div>
-                            <div class="card-body">
-                                <!-- Placeholder for commands -->
-                            </div>
+                    <div class="col-md-12 text-center">
+                        <h5>Action client data</h5>
+                        <div>
+                            <label for="goalList">Select a Goal:</label>
+                            <select id="goalList" class="form-control mb-3" v-model="selectedGoal">
+                                <option v-for="(goal, index) in goals" :key="index" :value="goal">
+                                    Goal {{ index + 1 }}: X={{ goal.position.x }}, Y={{ goal.position.y }}
+                                </option>
+                            </select>
+                            <button class="btn btn-success mr-2" @click="sendGoal" :disabled="!connected">Send
+                                Goal</button>
+                            <button class="btn btn-danger" @click="cancelGoal" :disabled="!goal">Cancel Goal</button>
+                        </div>
+                        <hr />
+                        <div>
+                            <label class="text-muted">Feedback</label>
+                            <p>Position: {{ action.feedback.position }}</p>
+                            <p>State: {{ action.feedback.state }}</p>
+                        </div>
+                        <hr />
+                        <div>
+                            <label class="text-muted">Result</label>
+                            <p>Succeeded? {{ action.result.success }}</p>
+                        </div>
+                        <hr />
+                        <div>
+                            <label class="text-muted">Status</label>
+                            <p>{{ action.status.text }}</p>
                         </div>
                     </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Joystick</h4>
-                            </div>
-                            <div class="card-body text-center">
-                                <div id="dragstartzone" @mousedown="startDrag" @mousemove="doDrag">
-                                    <div id="dragCircle" :style="dragCircleStyle"></div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Joystick</h4>
                                 </div>
-                                <hr>
+                                <div class="card-body text-center">
+                                    <div id="dragstartzone" @mousedown="startDrag" @mousemove="doDrag">
+                                        <div id="dragCircle" :style="dragCircleStyle"></div>
+                                    </div>
+                                    <hr>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script type="text/javascript">
-        // Load main.js dynamically to avoid cache issues
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'main.js?v=9.' + Date.now();
-        document.head.appendChild(script);
-    </script>
+        <script type="text/javascript">
+            // Load main.js dynamically to avoid cache issues
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'main.js?v=9.' + Date.now();
+            document.head.appendChild(script);
+        </script>
 </body>
 
 </html>

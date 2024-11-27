@@ -30,6 +30,26 @@ var app = new Vue({
         viewer: null,
         tfClient: null,
         urdfClient: null,
+        // Action
+        goal: null,
+        action: {
+            goal: { position: { x: 0, y: 0, z: 0 } },
+            feedback: { position: { x: 0, y: 0 }, state: 'idle' },
+            result: { success: false },
+            status: { text: 'Idle' }
+        },
+        goals: [
+            { position: { x: 0.67, y: -0.5, z: 0.0 } },
+            { position: { x: 0.67, y: 0.5, z: 0.0 } },
+            { position: { x: 0.2, y: 0.5, z: 0.0 } },
+            { position: { x: 0.2, y: 0.03, z: 0.0 } },
+            { position: { x: -0.13, y: 0.0, z: 0.0 } },
+            { position: { x: -0.13, y: -0.45, z: 0.0 } },
+            { position: { x: -0.45, y: -0.45, z: 0.0 } },
+            { position: { x: -0.17, y: 0.5, z: 0.0 } },
+            { position: { x: -0.66, y: 0.5, z: 0.0 } },
+        ],
+        selectedGoal: null
     },
     methods: {
         connect: function() {
@@ -87,6 +107,7 @@ var app = new Vue({
             });
         },
         disconnect: function() {
+            this.goal = null
             if (this.ros) {
                 this.ros.close();
             }
@@ -206,6 +227,37 @@ var app = new Vue({
                 topic: '/camera/image_raw',
                 ssl: true,
             })
+        },
+        sendGoal: function() {
+            let actionClient = new ROSLIB.ActionClient({
+                ros : this.ros,
+                serverName : '/tortoisebot_as',
+                actionName : 'course_web_dev_ros/WaypointActionAction'
+            })
+
+            this.goal = new ROSLIB.Goal({
+                actionClient : actionClient,
+                goalMessage: {
+                    position: this.selectedGoal.position
+                }
+            })
+
+            this.goal.on('status', (status) => {
+                this.action.status = status
+            })
+
+            this.goal.on('feedback', (feedback) => {
+                this.action.feedback = feedback
+            })
+
+            this.goal.on('result', (result) => {
+                this.action.result = result
+            })
+
+            this.goal.send()
+        },
+        cancelGoal: function() {
+            this.goal.cancel()
         },
     },
     mounted() {
