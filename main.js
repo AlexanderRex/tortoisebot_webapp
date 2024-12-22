@@ -39,8 +39,8 @@ var app = new Vue({
             status: { text: 'Idle' }
         },
         goals: [
-            { position: { x: 0.67, y: -0.5, z: 0.0 } },
-            { position: { x: 0.67, y: 0.5, z: 0.0 } },
+            { position: { x: 0.65, y: -0.5, z: 0.0 } },
+            { position: { x: 0.65, y: 0.5, z: 0.0 } },
             { position: { x: 0.2, y: 0.5, z: 0.0 } },
             { position: { x: 0.2, y: 0.03, z: 0.0 } },
             { position: { x: -0.13, y: 0.0, z: 0.0 } },
